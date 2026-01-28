@@ -8,7 +8,7 @@ const { connectDatabase, getModels } = require('./database');
 require('dotenv').config({ path: '.env.local' });
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 
 // Database models
 let Course, Content;
