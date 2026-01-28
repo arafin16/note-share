@@ -8,15 +8,15 @@ const { connectDatabase, getModels } = require('./database');
 require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Database models
 let Course, Content;
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, '../uploads');
+const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+  fs.mkdirSync(uploadsDir);
 }
 
 // Configure multer for file uploads
@@ -37,7 +37,7 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Simple admin check (hardcoded for now)
 const ADMIN_PASSWORD = "admin123";
@@ -129,6 +129,8 @@ app.post('/api/courses/:courseId/contents', async (req, res) => {
     const { courseId } = req.params;
     const { contentTitle, textData, fileName, fileType, fileUrl, id } = req.body;
 
+    
+
     if (!contentTitle) return res.status(400).json({ error: 'Content title required' });
     if (!courseId) return res.status(400).json({ error: 'Course ID required' });
     if (!id) return res.status(400).json({ error: 'Content ID required' });
@@ -176,7 +178,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     }
     
     const fileUrl = `/uploads/${req.file.filename}`;
-    console.log('File uploaded:', req.file.originalname, '->', fileUrl);
+    
     
     res.json({ 
       success: true, 

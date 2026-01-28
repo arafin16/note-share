@@ -6,17 +6,20 @@ A modern course management and note-sharing platform built with Express, MongoDB
 
 ```
 note-share/
-├── backend/              # Backend server code
+├── backend/              # Backend API server
 │   ├── server.js         # Main Express server
-│   └── database.js       # MongoDB connection & models
+│   ├── database.js       # MongoDB connection & models
+│   ├── package.json      # Backend dependencies
+│   ├── uploads/          # User uploaded files (git-ignored)
+│   └── .gitignore        # Backend ignore rules
 ├── public/               # Frontend static files
-│   ├── index.html        # Main HTML file
+│   ├── index.html        # Main HTML file with UI
 │   └── favicon.svg       # Site icon
-├── uploads/              # User uploaded files (git-ignored)
+├── package.json          # Root package.json (delegates to backend)
 ├── .env.local            # Environment variables (git-ignored)
 ├── .env.example          # Environment variables template
-├── package.json          # Node dependencies
-└── README.md             # This file
+├── README.md             # This file
+└── DEPLOYMENT.md         # Deployment instructions
 ```
 
 ## Setup Instructions

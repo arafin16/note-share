@@ -1,5 +1,11 @@
-node_modules
-uploads
-
+node_modules/
 .env
 .env.local
+*.db
+.DS_Store
+
+backend/node_modules
+
+backend/uploads
+
+DEPLOYMENT.md

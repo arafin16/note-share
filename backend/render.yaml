@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: noteshare-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGO_URI
+        value: mongodb://localhost:27017/shareNotes
+        scope: build
+      - key: PORT
+        value: 3000
+        scope: build

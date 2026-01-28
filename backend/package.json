@@ -1,0 +1,11 @@
+{
+  "name": "course-platform",
+  "version": "1.0.0",
+  "description": "Course Platform with Database",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "install": "cd backend && npm install"
+  }
+}

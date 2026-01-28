@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-const MONGO_URI = 'mongodb://localhost:27017/shareNotes';
 
 // Define Schemas
 const courseSchema = new mongoose.Schema({
@@ -29,8 +28,8 @@ const Content = mongoose.model('Content', contentSchema);
 // Connect to MongoDB
 async function connectDatabase() {
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log('✅ MongoDB connected:', MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB connected:');
     return { Course, Content };
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
