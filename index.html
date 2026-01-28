@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Platform (HTML CSS JS)</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    *{ box-sizing:border-box; margin:0; padding:0; font-family:Arial, sans-serif; }
+    body{ background:#ffffff; color:#111; }
+    .nav{
+      background:#fff; border-bottom:1px solid #ddd;
+      padding:14px 20px; display:flex; justify-content:space-between; align-items:center;
+      position:sticky; top:0;
+    }
+    .nav h1{ font-size:18px; }
+    .nav a{
+      text-decoration:none; color:#111; margin-left:12px;
+      padding:8px 10px; border-radius:8px;
+    }
+    .nav a:hover{ background:#f2f2f2; }
+    .container{ max-width:1100px; margin:20px auto; padding:0 16px; }
+    .grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+    .card{
+      border:1px solid #e6e6e6; border-radius:14px; padding:14px;
+      background:#fff; box-shadow:0 2px 10px rgba(0,0,0,0.03);
+    }
+    .card h3{ margin-bottom:8px; font-size:16px; }
+    .muted{ color:#666; font-size:13px; }
+    .btn{
+      padding:10px 14px; border:none; border-radius:10px;
+      cursor:pointer; font-weight:600;
+    }
+    .btn-primary{ background:#111; color:#fff; }
+    .btn-danger{ background:#d32f2f; color:#fff; }
+    .btn-blue{ background:#1565c0; color:#fff; }
+    .btn-gray{ background:#555; color:#fff; }
+    .btn:active{ transform:scale(0.98); }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; }
+    .field{ width:100%; margin-top:10px; }
+    input, textarea, select{
+      width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px;
+      outline:none;
+    }
+    textarea{ min-height:90px; resize:vertical; }
+    .section-title{ font-size:18px; margin:18px 0 10px; }
+    .divider{ height:1px; background:#eee; margin:18px 0; }
+    .hidden{ display:none; }
+    .pill{
+      display:inline-block; font-size:12px; padding:4px 8px;
+      background:#f3f3f3; border-radius:999px; margin-top:6px;
+    }
+    .content-item{
+      border:1px solid #eee; border-radius:12px; padding:10px;
+      margin-top:10px; background:#fafafa;
+      display:flex; justify-content:space-between; gap:10px;
+    }
+    .content-left{ width:100%; }
+    .actions{ display:flex; gap:8px; flex-wrap:wrap; align-items:flex-start; }
+    .small{ padding:8px 10px; font-size:13px; }
+    .success{ color:green; font-size:13px; margin-top:8px; }
+    .error{ color:#d32f2f; font-size:13px; margin-top:8px; }
+    .tag{ font-size:12px; color:#444; margin-top:4px; }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <h1>📘 Course Platform</h1>
+    <div>
+      <a href="#" onclick="showPage('homePage')">Home</a>
+      <a href="#" onclick="showPage('adminLoginPage')">Admin Login</a>
+      <a href="#" onclick="openDashboard()">Dashboard</a>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ✅ HOME PAGE -->
+    <div id="homePage">
+      <h2 class="section-title">All Courses</h2>
+      <div id="courseGrid" class="grid"></div>
+
+      <div class="divider"></div>
+
+      <h2 class="section-title">Add Course Content (Home Page)</h2>
+      <div class="card">
+        <div class="field">
+          <label class="muted">Select Course</label>
+          <select id="homeSelectCourse"></select>
+        </div>
+
+        <div class="field">
+          <label class="muted">Content Title</label>
+          <input id="homeContentTitle" type="text" placeholder="e.g. Lecture 1 Notes" />
+        </div>
+
+        <div class="field">
+          <label class="muted">Text Notes</label>
+          <textarea id="homeTextData" placeholder="Write notes here..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="muted">Upload File</label>
+          <input id="homeFile" type="file" />
+          <div class="muted" style="margin-top:6px;">(File will be saved in browser storage and downloadable)</div>
+        </div>
+
+        <div class="field">
+          <button class="btn btn-primary" onclick="addContentFromHome()">Submit Content</button>
+          <div id="homeMsg"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ✅ ADMIN LOGIN PAGE -->
+    <div id="adminLoginPage" class="hidden">
+      <h2 class="section-title">Admin Login</h2>
+      <div class="card" style="max-width:420px;">
+        <div class="field">
+          <label class="muted">Email</label>
+          <input id="adminEmail" type="email" value="" />
+        </div>
+
+        <div class="field">
+          <label class="muted">Password</label>
+          <input id="adminPassword" type="password" value="" />
+        </div>
+
+        <div class="field">
+          <button class="btn btn-primary" onclick="adminLogin()">Login</button>
+          <div id="loginMsg"></div>
+        </div>
+
+        
+      </div>
+    </div>
+
+
+    <!-- ✅ DASHBOARD PAGE -->
+    <div id="dashboardPage" class="hidden">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <h2 class="section-title">Admin Dashboard</h2>
+        <button class="btn btn-gray" onclick="logoutAdmin()">Logout</button>
+      </div>
+
+      <!-- Create Course -->
+      <div class="card" style="max-width:600px;">
+        <h3>➕ Create New Course</h3>
+        <div class="field">
+          <label class="muted">Course Title</label>
+          <input id="newCourseTitle" type="text" placeholder="Course Title" />
+        </div>
+        <div class="field">
+          <label class="muted">Course Description</label>
+          <textarea id="newCourseDesc" placeholder="Course Description"></textarea>
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" onclick="createCourse()">Create Course</button>
+          <div id="courseCreateMsg"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Update Course -->
+      <div id="updateBox" class="card hidden" style="max-width:600px;">
+        <h3>✏️ Update Course</h3>
+        <div class="field">
+          <label class="muted">Edit Title</label>
+          <input id="editCourseTitle" type="text" />
+        </div>
+        <div class="field">
+          <label class="muted">Edit Description</label>
+          <textarea id="editCourseDesc"></textarea>
+        </div>
+        <div class="field row">
+          <button class="btn btn-blue" onclick="saveCourseUpdate()">Save Update</button>
+          <button class="btn btn-gray" onclick="cancelUpdate()">Cancel</button>
+        </div>
+        <div id="courseUpdateMsg"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2 class="section-title">All Courses (Manage)</h2>
+      <div id="dashboardCourses" class="space"></div>
+    </div>
+
+  </div>
+
+<script>
+/* =========================
+   ✅ API CONFIG & HELPERS
+========================= */
+const API_BASE = "http://localhost:3000/api";
+const ADMIN_KEY = "COURSE_PLATFORM_ADMIN_LOGIN";
+
+let cachedData = { courses: [] };
+
+async function loadData() {
+  try {
+    const response = await fetch(`${API_BASE}/courses`);
+    if (!response.ok) throw new Error('Failed to fetch courses');
+    cachedData = { courses: await response.json() };
+    return cachedData;
+  } catch (error) {
+    console.error('Load error:', error);
+    return { courses: [] };
+  }
+}
+
+function saveData(data) {
+  cachedData = data;
+  // Data is saved via API calls, not here
+}
+
+function isAdminLoggedIn() {
+  return localStorage.getItem(ADMIN_KEY) === "true";
+}
+
+/* =========================
+   ✅ UI NAVIGATION
+========================= */
+function showPage(pageId) {
+  document.getElementById("homePage").classList.add("hidden");
+  document.getElementById("adminLoginPage").classList.add("hidden");
+  document.getElementById("dashboardPage").classList.add("hidden");
+
+  document.getElementById(pageId).classList.remove("hidden");
+}
+
+function openDashboard() {
+  if (!isAdminLoggedIn()) {
+    alert("⚠️ Please login as Admin first!");
+    showPage("adminLoginPage");
+    return;
+  }
+  showPage("dashboardPage");
+  renderDashboard();
+}
+
+/* =========================
+   ✅ RENDER HOME
+========================= */
+function renderHome() {
+  const data = cachedData;
+  const grid = document.getElementById("courseGrid");
+  grid.innerHTML = "";
+
+  if (!data || !data.courses || data.courses.length === 0) {
+    grid.innerHTML = `<p class="muted">No courses available.</p>`;
+  } else {
+    data.courses.forEach(course => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h3>${course.title}</h3>
+        <p class="muted">${course.description}</p>
+        <div class="pill">Contents: ${course.contents ? course.contents.length : 0}</div>
+        <div style="margin-top:10px;">
+          <button class="btn btn-blue small" onclick="viewCourse('${course.id}')">View Details</button>
+        </div>
+      `;
+      grid.appendChild(div);
+    });
+  }
+
+  // dropdown
+  const select = document.getElementById("homeSelectCourse");
+  select.innerHTML = "";
+  if (data && data.courses) {
+    data.courses.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.title;
+      select.appendChild(opt);
+    });
+  }
+}
+
+function viewCourse(courseId) {
+  const data = cachedData;
+  if (!data || !data.courses) return alert("Data not loaded");
+  const course = data.courses.find(c => c.id === courseId);
+  if (!course) return alert("Course not found");
+
+  let msg = `Course: ${course.title}\n\nContents:\n`;
+  if (!course.contents || course.contents.length === 0) msg += "- No contents yet.";
+  else {
+    course.contents.forEach((ct, i) => {
+      msg += `${i+1}. ${ct.contentTitle} ${ct.fileName ? "(File: " + ct.fileName + ")" : ""}\n`;
+    });
+  }
+  alert(msg);
+}
+
+/* =========================
+   ✅ FILE → BASE64
+========================= */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* =========================
+   ✅ UPLOAD THING FILE UPLOAD
+========================= */
+async function uploadFileToUploadThing(file) {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Upload failed');
+    }
+
+    const data = await response.json();
+    return data.url || null;
+  } catch (error) {
+    console.error('Upload error:', error);
+    return null;
+  }
+}
+
+/* =========================
+   ✅ HOME: ADD CONTENT
+========================= */
+async function addContentFromHome() {
+  const courseId = document.getElementById("homeSelectCourse").value;
+  const contentTitle = document.getElementById("homeContentTitle").value.trim();
+  const textData = document.getElementById("homeTextData").value.trim();
+  const fileInput = document.getElementById("homeFile");
+  const msgBox = document.getElementById("homeMsg");
+
+  msgBox.innerHTML = "";
+
+  if (!courseId || !contentTitle) {
+    msgBox.innerHTML = `<div class="error">❌ Course and Content Title are required.</div>`;
+    return;
+  }
+
+  let fileUrl = "";
+  let fileName = "";
+  let fileType = "";
+
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    fileName = file.name;
+    fileType = file.type || "unknown";
+    
+    msgBox.innerHTML = `<div class="success">📤 Uploading file...</div>`;
+    
+    fileUrl = await uploadFileToUploadThing(file);
+    
+    if (!fileUrl) {
+      msgBox.innerHTML = `<div class="error">❌ File upload failed. Trying without file...</div>`;
+    }
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/courses/${courseId}/contents`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: crypto.randomUUID(),
+        contentTitle,
+        textData,
+        fileName,
+        fileType,
+        fileUrl
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to add content');
+    }
+
+    document.getElementById("homeContentTitle").value = "";
+    document.getElementById("homeTextData").value = "";
+    document.getElementById("homeFile").value = "";
+
+    msgBox.innerHTML = `<div class="success">✅ Content added successfully!</div>`;
+    await loadData();
+    renderHome();
+  } catch (error) {
+    console.error('Content add error:', error);
+    msgBox.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+  }
+}
+
+/* =========================
+   ✅ ADMIN LOGIN
+========================= */
+async function adminLogin() {
+  const email = document.getElementById("adminEmail").value.trim();
+  const pass = document.getElementById("adminPassword").value.trim();
+  const msgBox = document.getElementById("loginMsg");
+
+  msgBox.innerHTML = "";
+
+  try {
+    const response = await fetch(`${API_BASE}/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      localStorage.setItem(ADMIN_KEY, "true");
+      msgBox.innerHTML = `<div class="success">✅ Login successful!</div>`;
+      setTimeout(() => {
+        showPage("dashboardPage");
+        renderDashboard();
+      }, 700);
+    } else {
+      msgBox.innerHTML = `<div class="error">❌ Invalid email or password</div>`;
+    }
+  } catch (error) {
+    msgBox.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+  }
+}
+
+function logoutAdmin() {
+  localStorage.removeItem(ADMIN_KEY);
+  alert("✅ Logged out");
+  showPage("homePage");
+}
+
+/* =========================
+   ✅ DASHBOARD
+========================= */
+let editingCourseId = "";
+
+function renderDashboard() {
+  if (!isAdminLoggedIn()) {
+    showPage("adminLoginPage");
+    return;
+  }
+
+  const data = cachedData;
+  if (!data || !data.courses) {
+    document.getElementById("dashboardCourses").innerHTML = `<p class="muted">Loading...</p>`;
+    return;
+  }
+
+  const holder = document.getElementById("dashboardCourses");
+  holder.innerHTML = "";
+
+  data.courses.forEach(course => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:10px;">
+        <div>
+          <h3>${course.title}</h3>
+          <p class="muted">${course.description}</p>
+          <div class="pill">Contents: ${course.contents.length}</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-blue small" onclick="startUpdateCourse('${course.id}')">Edit</button>
+          <button class="btn btn-danger small" onclick="deleteCourse('${course.id}')">Delete</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <b>Contents</b>
+        ${course.contents.length === 0 ? `<p class="muted">No contents yet.</p>` : ""}
+      </div>
+
+      <div id="contents-${course.id}"></div>
+    `;
+
+    holder.appendChild(div);
+
+    // render content list
+    const contentBox = document.getElementById(`contents-${course.id}`);
+    course.contents.forEach(ct => {
+      const row = document.createElement("div");
+      row.className = "content-item";
+
+      const downloadBtn = ct.fileUrl
+        ? `<button class="btn btn-blue small" onclick="downloadFile('${course.id}','${ct.id}')">Download</button>`
+        : "";
+
+      row.innerHTML = `
+        <div class="content-left">
+          <div><b>${ct.contentTitle}</b></div>
+          ${ct.textData ? `<div class="tag">${ct.textData}</div>` : ""}
+          ${ct.fileName ? `<div class="muted">📎 ${ct.fileName} (${ct.fileType})</div>` : `<div class="muted">No file</div>`}
+        </div>
+        <div class="actions">
+          ${downloadBtn}
+          <button class="btn btn-danger small" onclick="deleteContent('${course.id}','${ct.id}')">Delete</button>
+        </div>
+      `;
+      contentBox.appendChild(row);
+    });
+  });
+}
+
+function createCourse() {
+  const title = document.getElementById("newCourseTitle").value.trim();
+  const desc = document.getElementById("newCourseDesc").value.trim();
+  const msgBox = document.getElementById("courseCreateMsg");
+
+  msgBox.innerHTML = "";
+
+  if (!title) {
+    msgBox.innerHTML = `<div class="error">❌ Title is required.</div>`;
+    return;
+  }
+
+  fetch(`${API_BASE}/courses`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: crypto.randomUUID(),
+      title,
+      description: desc
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("newCourseTitle").value = "";
+    document.getElementById("newCourseDesc").value = "";
+    msgBox.innerHTML = `<div class="success">✅ Course created!</div>`;
+    loadData().then(() => {
+      renderHome();
+      renderDashboard();
+    });
+  })
+  .catch(err => {
+    msgBox.innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+  });
+}
+
+function deleteCourse(courseId) {
+  const ok = confirm("Are you sure to delete this course?");
+  if (!ok) return;
+
+  fetch(`${API_BASE}/courses/${courseId}`, { method: 'DELETE' })
+    .then(() => {
+      loadData().then(() => {
+        renderHome();
+        renderDashboard();
+      });
+    })
+    .catch(err => alert(`Error: ${err.message}`));
+}
+
+function startUpdateCourse(courseId) {
+  const data = cachedData;
+  if (!data || !data.courses) return;
+  const course = data.courses.find(c => c.id === courseId);
+  if (!course) return;
+
+  editingCourseId = courseId;
+  document.getElementById("updateBox").classList.remove("hidden");
+  document.getElementById("editCourseTitle").value = course.title;
+  document.getElementById("editCourseDesc").value = course.description;
+  document.getElementById("courseUpdateMsg").innerHTML = "";
+}
+
+function cancelUpdate() {
+  editingCourseId = "";
+  document.getElementById("updateBox").classList.add("hidden");
+}
+
+function saveCourseUpdate() {
+  const title = document.getElementById("editCourseTitle").value.trim();
+  const desc = document.getElementById("editCourseDesc").value.trim();
+  const msgBox = document.getElementById("courseUpdateMsg");
+
+  msgBox.innerHTML = "";
+
+  if (!editingCourseId) return;
+  if (!title) {
+    msgBox.innerHTML = `<div class="error">❌ Title is required.</div>`;
+    return;
+  }
+
+  fetch(`${API_BASE}/courses/${editingCourseId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description: desc })
+  })
+  .then(res => res.json())
+  .then(() => {
+    msgBox.innerHTML = `<div class="success">✅ Course updated!</div>`;
+    loadData().then(() => {
+      renderHome();
+      renderDashboard();
+    });
+    setTimeout(() => cancelUpdate(), 500);
+  })
+  .catch(err => {
+    msgBox.innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+  });
+}
+
+function deleteContent(courseId, contentId) {
+  const ok = confirm("Delete this content?");
+  if (!ok) return;
+
+  fetch(`${API_BASE}/courses/${courseId}/contents/${contentId}`, { method: 'DELETE' })
+    .then(() => {
+      loadData().then(() => {
+        renderHome();
+        renderDashboard();
+      });
+    })
+    .catch(err => alert(`Error: ${err.message}`));
+}
+
+function downloadFile(courseId, contentId) {
+  const data = cachedData;
+  const course = data.courses.find(c => c.id === courseId);
+  if (!course) return alert("No course found");
+
+  const content = course.contents.find(ct => ct.id === contentId);
+  if (!content || !content.fileUrl) return alert("No file found");
+
+  // Open in new tab or download
+  window.open(content.fileUrl, '_blank');
+}
+
+/* =========================
+   ✅ INIT
+========================= */
+loadData().then(() => {
+  showPage("homePage");
+  renderHome();
+});
+</script>
+
+</body>
+</html>
